@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gas price calculator</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/9.9.4/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/9.9.4/firebase-functions-compat.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <style media="screen">
+
+      html {
+        font-family: monospace;
+      }
+      
+      body {
+        background-color: #000000;
+        color: #00ff22;
+      }
+
+      .container {
+        display: grid;
+        text-align: center;
+        grid-template-rows: 100px 100px 1fr;
+      }
+
+      h1 {
+
+      }
+
+      p {
+        font-size: large;
+      }
+
+      #svg {
+        position: relative;
+        max-width: 650px;
+        transform: translateX(-50%);
+        left: 50%;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Hur mycket ska jag swisha Philip idag?</h1>
+      <p id="content">Loading</p>
+      <div id="svg"></div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', async function() {
+        const contentEl = document.querySelector('#content');
+        const svgEl = document.querySelector("#svg");
+
+        try {
+          let app = firebase.app();
+
+          const { data } = await app.functions().httpsCallable("scrapeTest")()
+          
+          const pricePerLitre = data.reduce((acc, cur) => acc + cur.price,0)/data.length
+          const FUEL_RATE = 0.5 // Litres
+          const DISTANCE = 7 // Swedish miles
+
+          const journeyPrice = (DISTANCE * FUEL_RATE) *  pricePerLitre;
+          
+          const { data: svg } = await fetch("generateQrCode", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount: journeyPrice.toFixed(2).toString() })
+          }).then(x => x.json())
+
+          svgEl.innerHTML = svg;
+          contentEl.textContent = `${journeyPrice.toFixed(2)} kr = (${DISTANCE} mil / ${FUEL_RATE} liter/mil) * ${pricePerLitre.toFixed(2)} kr/liter`
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    </script>
+  </body>
+</html>
