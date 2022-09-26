@@ -1,5 +1,5 @@
-export const getCalculatedFuelPrice = async (db) => {
-	const ref = db.ref("calculated-fuel-price")
+export const getCalculatedFuelPrice = async (db, fuelType) => {
+	const ref = db.ref(`calculated-fuel-price/${fuelType}`)
 
 	let result
 

@@ -2,7 +2,6 @@
 
 import functions from "firebase-functions"
 import admin from "firebase-admin"
-import jsdom from "jsdom"
 import express from "express"
 
 import {generateQrCode} from "./src/generateQrCode.js"
@@ -11,20 +10,23 @@ import {saveScrapedFuelPrices} from "./src/saveScrapedFuelPrices.js"
 import {saveCalculatedFuelPrice} from "./src/saveCalculatedFuelPrice.js"
 import {calculateFuelPrice} from "./src/calculateFuelPrice.js"
 import {getCalculatedFuelPrice} from "./src/getCalculatedFuelPrice.js"
+import {fuelTypes} from "./src/fuelTypes.js"
 
 
 const isEmulator = () => process.env.FUNCTIONS_EMULATOR === "true"
 
+// App setup
 admin.initializeApp()
 const db = admin.database()
-
 const app = express()
+
 app.set("view engine", "ejs")
 app.use(express.static("public"))
 
 
+// Endpoints
 app.get("/", async (_req, res) => {
-	const fuelPrice = await getCalculatedFuelPrice(db)
+	const fuelPrice = await getCalculatedFuelPrice(db, "DIESEL")
 	if (!fuelPrice) {
 		res.send("Nothing to be found yet :(")
 		return
@@ -43,16 +45,23 @@ app.get("/", async (_req, res) => {
 	})
 })
 
+// Functions
 export const web = functions.https.onRequest(app)
 
 export const scrape = functions.pubsub
-	.schedule("0 1 * * *")
+	.schedule("0 */8 * * *")
 	.timeZone("Europe/Stockholm")
 	.onRun(async (_context) => {
 		const timestamp = admin.database.ServerValue.TIMESTAMP
 		const fuelPrices = await scrapeFuelPrices()
-		await saveScrapedFuelPrices(db, timestamp, fuelPrices)
 
-		const fuelPrice = await calculateFuelPrice(db)
-		await saveCalculatedFuelPrice(db, timestamp, fuelPrice)
+		for (const fuelType of fuelTypes) {
+			const fuelPricesOfFuelType =
+				fuelPrices.filter((fuelPrice) => fuelPrice.fuelType === fuelType)
+
+			await saveScrapedFuelPrices(db, timestamp, fuelPricesOfFuelType, fuelType)
+
+			const fuelPrice = await calculateFuelPrice(db, fuelType)
+			await saveCalculatedFuelPrice(db, timestamp, fuelPrice, fuelType)
+		}
 	})

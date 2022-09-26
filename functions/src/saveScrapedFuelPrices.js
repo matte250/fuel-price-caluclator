@@ -1,5 +1,5 @@
-export const saveScrapedFuelPrices = async (db, timestamp, fuelPrices) => {
-	const ref = db.ref("fuel-prices")
+export const saveScrapedFuelPrices = async (db, timestamp, fuelPrices, fuelType) => {
+	const ref = db.ref(`fuel-prices/${fuelType}`)
 
 	const promises = fuelPrices
 		.filter((x) => !x.isGlobalPrice)
@@ -8,6 +8,7 @@ export const saveScrapedFuelPrices = async (db, timestamp, fuelPrices) => {
 			company: x.company.toUpperCase(),
 			municipality: x.municipality.toUpperCase(),
 			address: x.address.toUpperCase(),
+			fuelType: x.fuelType.toUpperCase(),
 			timestamp: timestamp,
 		}))
 

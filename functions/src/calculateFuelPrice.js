@@ -1,5 +1,5 @@
-export const calculateFuelPrice = async (db) => {
-	const ref = db.ref("fuel-prices")
+export const calculateFuelPrice = async (db, fuelType) => {
+	const ref = db.ref(`fuel-prices/${fuelType}`)
 
 	const dbFuelPrices = await ref
 		.orderByChild("timestamp")

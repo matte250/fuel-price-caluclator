@@ -4,7 +4,7 @@ export const generateQrCode = async ({
 	amount,
 }) => {
 	const result = await QRCode.toString(createSwishQrCodeFormat({
-		recipient: "0769352227",
+		recipient: "0733430393",
 		amount: amount.toString(),
 		message: "Hi!",
 	}), {
