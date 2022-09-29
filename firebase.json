@@ -21,6 +21,12 @@
     },
     "ui": {
       "enabled": true
+    },
+    "database": {
+      "port": 9000
+    },
+    "hosting": {
+      "port": 5000
     }
   },
   "database": {
@@ -33,9 +39,11 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [{
-      "source": "**",
-      "function": "web"
-    }]
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "web"
+      }
+    ]
   }
 }
