@@ -5,6 +5,7 @@ module.exports = {
 		node: true,
 		browser: true,
 	},
+	ignorePatterns: ["bundle.js"],
 	extends: [
 		"eslint:recommended",
 		"google",
