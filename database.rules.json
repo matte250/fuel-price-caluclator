@@ -2,6 +2,28 @@
   /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
   "rules": {
     ".read": false,
-    ".write": false
+    ".write": false,
+    "fuel-prices": {
+      "DIESEL": {
+        ".indexOn": "timestamp"
+      },
+      "PETROL": {
+        ".indexOn": "timestamp"
+      },
+      "ETHANOL": {
+        ".indexOn": "timestamp"
+      }
+    },
+    "calculated-fuel-price": {
+      "DIESEL": {
+        ".indexOn": "timestamp"
+      },
+      "PETROL": {
+        ".indexOn": "timestamp"
+      },
+      "ETHANOL": {
+        ".indexOn": "timestamp"
+      }
+    }
   }
 }

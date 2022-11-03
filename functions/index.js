@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-
 import functions from "firebase-functions"
 import admin from "firebase-admin"
 import express from "express"

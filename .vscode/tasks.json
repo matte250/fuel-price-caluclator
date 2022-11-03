@@ -4,12 +4,16 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "Start hosting and database",
-        "command": "./start.cmd",
+        "label": "Start emulators",
+        "command": "./scripts/start-emulators.ps1",
+        "type": "shell",
+        
         "presentation": {
             "group": "env",
             "reveal": "always",
-            "panel": "dedicated",
+            "panel": "shared",
+            "showReuseMessage": true,
+            "clear": false
         }
       },
       {
@@ -24,15 +28,29 @@
       },
       {
         "label": "Start dev enviroment",
-        "dependsOn": ["Start hosting and database", "Start functions shell", "Open browser"],
-        "runOptions": {
-            "runOn": "folderOpen"
-        }
+        "dependsOn": ["Start emulators", "Open browser"],
+      },
+      {
+        "label": "Seed database",
+        "options": {
+          "cwd": "./functions"
+        },
+        "presentation": {
+          "group": "env",
+          "reveal": "always",
+          "close": true
+        },
+        "command": "node",
+        "args": ["./dbseed.js"]
       },
       {
         "label": "Open browser",
         "type": "shell",
         "command": "start http://localhost:5000",
+        "presentation": {
+          "reveal": "silent",
+          "close": true
+        }
       }
     ]
   }

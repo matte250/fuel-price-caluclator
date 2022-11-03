@@ -12,5 +12,5 @@ export const saveScrapedFuelPrices = async (db, timestamp, fuelPrices, fuelType)
 			timestamp: timestamp,
 		}))
 
-	await Promise.all(promises)
+	return await Promise.all(promises)
 }
