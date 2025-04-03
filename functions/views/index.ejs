@@ -1,21 +1,87 @@
-<link 
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Roboto"
-/>
-<link 
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-/>
-<link 
-    rel="stylesheet" 
-    href="style.css" 
-/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato" />
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="style.css" />
 
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trip cost</title>
 
-kebab
+<body>
+    <form action="" method="post" id="form">
+        <div class="layout">
+            <h1 class="panel">
+                <span>Bränsle</span><span>kostnads</span><span>uträknare</span>
+            </h1>
+            <div class="square-buttons-grid">
+                <button type="button">
+                    <span>Bensin</span>
+                    <span><%= fuelPrices.petrol.toFixed(2) %>kr/l</span>
+                </button>
+                <button type="button">
+                    <span>Diesel</span>
+                    <span><%= fuelPrices.diesel.toFixed(2) %>kr/l</span>
+                </button>
+                <button type="button">
+                    <span>Ethanol</span>
+                    <span><%= fuelPrices.ethanol.toFixed(2) %>kr/l</span>
+                </button>
+            </div>
+            <div class="input-layout panel">
+                <label>Drivmedelskostnad</label>
+                <div class="input-label-layout">
+                    <input 
+                        id="input-fuel-per-volume-cost" 
+                        type="number"
+                        pattern="[0-9]*"
+                        class="input cost-per-volume-postfix" inputmode="numeric"
+                        value="<%= formValues.perVolumeCost %>" />
+                    <span class="postfix">kr/l</span>
+                </div>
+            </div>
+            <div class="input-layout panel">
+                <label>Bränslsekonsumption</label>
+                <div class="input-label-layout">
+                    <input 
+                        id="input-fuel-consumption"
+                        type="number"
+                        pattern="[0-9]*"
+                        class="input"
+                        inputmode="numeric"
+                        value="<%= formValues.consumption %>" />
+                    <span class="postfix">l/km</span>
+                </div>
+            </div>
+            <div class="input-layout panel">
+                <label>Distans</label>
+                <div class="input-label-layout">
+                    <input 
+                        id="input-distance"
+                        type="number"
+                        pattern="[0-9]*"
+                        class="input"
+                        inputmode="numeric"
+                        value="<%= formValues.distance %>" />
+                    <span class="postfix">km</span>
+                </div>
+            </div>
+            <div class="panel">
+                <label for="" class="label">
+                    Kostnad
+                </label>
+                <span class="result">
+                    <%= ((formValues.distance * formValues.consumption) * formValues.perVolumeCost).toFixed(2)  %> kr
+                </span>
+            </div>
+            <div class="panel">
+                <label class="label">Swish Qrkod</label>
+                <div class="qrcode-wrapper">
+                    <%- qrCode %>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
 
 <script type="text/javascript" src="bundle.js" defer></script>

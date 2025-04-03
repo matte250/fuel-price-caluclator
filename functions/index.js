@@ -24,24 +24,39 @@ app.use(express.static("public"))
 
 
 // Endpoints
-app.get("/", async (_req, res) => {
-	const fuelPrice = await getCalculatedFuelPrice(db, "DIESEL")
-	if (!fuelPrice) {
-		res.send("Nothing to be found yet :(")
-		return
+app.get("/", async (req, res) => {
+	const fuelPrices = {
+		petrol: await getCalculatedFuelPrice(db, "PETROL") ?? 0,
+		diesel: await getCalculatedFuelPrice(db, "DIESEL") ?? 0,
+		ethanol: await getCalculatedFuelPrice(db, "ETHANOL") ?? 0,
 	}
 
-	const DISTANCE = 7
-	const FUEL_CONSUMPTION = 0.5
+	const formValues = {
+		perVolumeCost: Number(req.query.perVolumeCost) || fuelPrices.petrol,
+		consumption: Number(req.query.consumption) || 0.05,
+		distance: Number(req.query.distance) || 70,
+	}
 
-	const tripPrice = (DISTANCE * FUEL_CONSUMPTION) * fuelPrice
+	const tripPrice = (formValues.distance * formValues.consumption) * formValues.perVolumeCost
 
 	const qrCode = await generateQrCode({amount: tripPrice.toFixed(2)})
 	res.render("index", {
 		qrCode,
 		tripPrice: tripPrice.toFixed(2),
-		fuelPrice: fuelPrice.toFixed(2),
+		fuelPrices,
+		formValues,
 	})
+})
+
+app.get("/generate-qrcode", async (req, res) => {
+	const amount = Number(req.query.amount)
+	if (!amount) {
+		res.sendStatus(400)
+		return
+	}
+
+	const qrCode = await generateQrCode({amount})
+	res.send(qrCode)
 })
 
 // Functions
@@ -55,8 +70,8 @@ export const scrape = functions.pubsub
 		const fuelPrices = await scrapeFuelPrices()
 
 		for (const fuelType of fuelTypes) {
-			const fuelPricesOfFuelType =
-				fuelPrices.filter((fuelPrice) => fuelPrice.fuelType === fuelType)
+			const fuelPricesOfFuelType
+				= fuelPrices.filter((fuelPrice) => fuelPrice.fuelType === fuelType)
 
 			await saveScrapedFuelPrices(db, timestamp, fuelPricesOfFuelType, fuelType)
 

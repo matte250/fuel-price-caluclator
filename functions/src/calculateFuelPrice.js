@@ -8,8 +8,8 @@ export const calculateFuelPrice = async (db, fuelType) => {
 		.then((snapshot) => snapshot.val())
 
 	const prices = Object.entries(dbFuelPrices).map(([_, value]) => value.price)
-	const averageFuelPrice =
-        (prices.reduce((acc, cur) => acc + cur, 0) / prices.length)
+	const averageFuelPrice
+        = (prices.reduce((acc, cur) => acc + cur, 0) / prices.length)
 
 	return averageFuelPrice
 }

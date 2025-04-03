@@ -21,5 +21,7 @@ module.exports = {
 		"indent": ["error", "tab"],
 		"no-tabs": "off",
 		"no-console": "warn",
+		"require-jsdoc": "off",
+		"operator-linebreak": ["warn", "before"],
 	},
 }
